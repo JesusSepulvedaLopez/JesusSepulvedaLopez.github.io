@@ -68,7 +68,8 @@
 
             //Cuadrito
             //player.fill(ctx);
-            ctx.drawImage(iPlayer, player.x, player.y);
+            
+            ctx.drawImage(iPlayer, player.x, player.y,player.w,player.h);
 
             //target.fill(ctx);
             ctx.drawImage(iTarget, target.x, target.y);
@@ -89,7 +90,7 @@
             if(gameOver){
                 ctx.fillText("Laberinto Completado", 400, 500)
             }
-
+           
         }
 
         function update() {
@@ -150,10 +151,24 @@
             //iBackground.src = "assets/fondo.jpg";
 
             player = new Cuadrado(10, 30, 25, 30, color);
-            iPlayer.src = "assets/ardilla.png";
+            
+            switch(dir){
+                case "derecha":
+                iPlayer.src = "assets/cangrejoDer.png";
+                break;
+                case "izquierda":
+                iPlayer.src = "assets/cangrejoIzq.png";
+                break;
+                case "arriba":
+                iPlayer.src = "assets/cangrejoArr.png";
+                break;
+                case "abajo":
+                iPlayer.src = "assets/cangrejoAba.png";
+                break;
+            }
 
             target = new Cuadrado(1240, 830, 150, 150, 'blue');
-            iTarget.src = "assets/bellota.png";
+            iTarget.src = "assets/dolar.png";
 
 
             walls.push(new Cuadrado(10, 10, 1170, 20, "yellow"));
