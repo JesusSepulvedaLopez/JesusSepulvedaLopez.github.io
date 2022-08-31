@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laberinto</title>
+    <style type="text/css">
+        canvas {
+            border-style: solid;
+            border-width: 1px;
+            border-color: black;
+        }
+
+        #canvasContainer {
+            width: 1500px;
+            height: 750px;
+            overflow: scroll;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="canvasContainer">
+        <canvas id="mycanvas" width="1500" height="1050">
+            Si puedes ver esto tu navegador no soporta canvas
+        </canvas>
+    </div>
+
+
+
+
+    <script type="text/javascript">
+        var canvas = null;
+        var ctx = null;
+        var color = "#3FFF33";
+        var globalX = 0;
+        var globalY = 0;
+        var speed = 2;
+
+        var dir = 'derecha';
+        var lastPress = null;
+
+        var player = null;
+        var target = null;
+        var walls = new Array();
+        //var wall = null;
+
+        var pause = true;
+        var score = 0;
+        var gameOver = false
+
+        var iPlayer = new Image();
+        var iTarget = new Image();
+        var iWalls = new Image();
+        var iBackground = new Image();
+        var sound = new Audio();
+        var sound2 = new Audio();
+
+        //Esta funcion pinta en pantalla
+        function paint(ctx) {
+            //Fondo
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, 1500, 1050);
+            ctx.drawImage(iBackground, 0, 0, 1500, 1050);
+
+            //Cuadrito
+            //player.fill(ctx);
+            ctx.drawImage(iPlayer, player.x, player.y);
+
+            //target.fill(ctx);
+            ctx.drawImage(iTarget, target.x, target.y);
+
+            for (var i = 0; i < walls.length; i++) {
+                walls[i].fill(ctx);
+
+            }
+
+
+            ctx.fillStyle = "white";
+            ctx.font = "60px Arial"
+
+            if (pause) {
+                ctx.fillText("PAUSE", 550, 500)
+            }
+
+            if(gameOver){
+                ctx.fillText("Laberinto Completado", 400, 500)
+            }
+
+        }
+
+        function update() {
+            window.requestAnimationFrame(update);
+
+            if (!pause && !gameOver) {
+
+                sound.play();
+
+                if (lastPress == 39) dir = 'derecha';
+                if (lastPress == 37) dir = 'izquierda';
+                if (lastPress == 38) dir = 'arriba';
+                if (lastPress == 40) dir = 'abajo';
+
+                if (dir == 'derecha') player.x += speed;
+                if (dir == 'izquierda') player.x -= speed;
+                if (dir == 'arriba') player.y -= speed;
+                if (dir == 'abajo') player.y += speed;
+
+                /* if (player.x > 500) player.x = 0;
+                if (player.y > 500) player.y = 0;
+                if (player.x < 0) player.x = 500;
+                if (player.y < 0) player.y = 500; */
+
+                if (player.x > 1250) player.x = 1250;
+                if (player.x < 25) player.x = 25;
+
+                if (player.touch(target)) {
+                    gameOver = true;
+                    sound2.play();
+
+                    if (dir == 'derecha') player.x -= speed;
+                    if (dir == 'izquierda') player.x += speed;
+                    if (dir == 'arriba') player.y += speed;
+                    if (dir == 'abajo') player.y -= speed;
+                }
+
+                for (var i = 0; i < walls.length; i++) {
+                    if (player.touch(walls[i])) {
+                        if (dir == 'derecha') player.x -= speed;
+                        if (dir == 'izquierda') player.x += speed;
+                        if (dir == 'arriba') player.y += speed;
+                        if (dir == 'abajo') player.y -= speed;
+                    }
+                }
+
+            }else{
+                sound.pause();
+            }
+            paint(ctx);
+        }
+
+        //Esta funcion inicializa las variables
+        function run() {
+            var canvas = document.getElementById('mycanvas'); //Poner lienzo
+            ctx = canvas.getContext('2d');
+
+            iBackground.src = "assets/fondo.jpg";
+
+            player = new Cuadrado(10, 30, 25, 30, color);
+            iPlayer.src = "assets/ardilla.png";
+
+            target = new Cuadrado(1240, 830, 150, 150, 'blue');
+            iTarget.src = "assets/bellota.png";
+
+
+            walls.push(new Cuadrado(10, 10, 1170, 20, "yellow"));
+
+            walls.push(new Cuadrado(10, 60, 20, 960, "yellow"));
+
+            walls.push(new Cuadrado(30, 60, 80, 20, "gray"));
+            walls.push(new Cuadrado(110, 60, 20, 160, "gray"));
+            walls.push(new Cuadrado(60, 120, 50, 20, "gray"))
+            walls.push(new Cuadrado(130, 200, 40, 20, "gray"))
+            walls.push(new Cuadrado(170, 30, 20, 130, "orange"));
+            walls.push(new Cuadrado(190, 140, 190, 20, "gray"))
+
+            walls.push(new Cuadrado(230, 80, 20, 30, "gray"));
+            walls.push(new Cuadrado(230, 60, 80, 20, "gray"))
+            walls.push(new Cuadrado(290, 80, 20, 30, "gray"));
+            walls.push(new Cuadrado(310, 90, 40, 20, "gray"))
+            walls.push(new Cuadrado(330, 110, 20, 30, "gray"));
+            walls.push(new Cuadrado(390, 60, 40, 20, "cyan"))
+            walls.push(new Cuadrado(430, 60, 20, 140, "gray"));
+            walls.push(new Cuadrado(450, 90, 140, 20, "pink"));
+            // walls.push(new Cuadrado(490, 30, 20, 20, "orange"));
+            walls.push(new Cuadrado(490, 30, 200, 20, "gray"));
+            walls.push(new Cuadrado(490, 150, 140, 20, "pink"));
+            walls.push(new Cuadrado(630, 50, 20, 120, "gray"));
+
+
+            walls.push(new Cuadrado(200, 160, 20, 240, "purple"));
+            walls.push(new Cuadrado(260, 200, 20, 300, "gray"));
+            walls.push(new Cuadrado(190, 500, 150, 20, "cyan"))
+            walls.push(new Cuadrado(190, 460, 20, 40, "gray"))
+            walls.push(new Cuadrado(190, 440, 40, 20, "gray"))
+            walls.push(new Cuadrado(250, 520, 20, 100, "gray"))
+            walls.push(new Cuadrado(190, 560, 20, 120, "gray"))
+            walls.push(new Cuadrado(210, 660, 200, 20, "gray"))
+            walls.push(new Cuadrado(310, 560, 20, 100, "gray"))
+            walls.push(new Cuadrado(410, 620, 20, 60, "purple"))
+            walls.push(new Cuadrado(370, 610, 60, 15, "gray"))
+            walls.push(new Cuadrado(330, 560, 150, 15, "gray"))
+            walls.push(new Cuadrado(470, 560, 20, 60, "gray"));
+            walls.push(new Cuadrado(490, 600, 20, 20, "gray"));
+            walls.push(new Cuadrado(510, 600, 20, 140, "yellow"))
+            walls.push(new Cuadrado(570, 560, 20, 40, "gray"))
+            walls.push(new Cuadrado(570, 600, 120, 20, "gray"))
+            walls.push(new Cuadrado(690, 600, 20, 140, "yellow"))
+            walls.push(new Cuadrado(530, 660, 120, 20, "gray"))
+            walls.push(new Cuadrado(570, 720, 120, 20, "white"))
+            walls.push(new Cuadrado(570, 740, 20, 160, "gray"))
+            walls.push(new Cuadrado(630, 740, 20, 40, "brown"))
+            walls.push(new Cuadrado(690, 780, 20, 40, "gray"))
+            walls.push(new Cuadrado(630, 820, 200, 20, "white"))
+            walls.push(new Cuadrado(830, 770, 20, 70, "gray"))
+            walls.push(new Cuadrado(730, 840, 20, 60, "gray"))
+            walls.push(new Cuadrado(730, 900, 100, 20, "gray"))
+            walls.push(new Cuadrado(830, 880, 20, 40, "gray"))
+
+
+
+
+            walls.push(new Cuadrado(280, 200, 170, 20, "gray"));
+            walls.push(new Cuadrado(320, 260, 20, 200, "brown"));
+            walls.push(new Cuadrado(340, 320, 100, 20, "gray"))
+            walls.push(new Cuadrado(340, 380, 60, 20, "gray"))
+            walls.push(new Cuadrado(440, 320, 20, 120, "yellow"));
+            walls.push(new Cuadrado(380, 440, 350, 20, "white"))
+            walls.push(new Cuadrado(500, 280, 20, 120, "gray"))
+            walls.push(new Cuadrado(520, 380, 40, 20, "gray"))
+            walls.push(new Cuadrado(600, 340, 20, 100, "brown"));
+            walls.push(new Cuadrado(560, 320, 180, 20, "gray"))
+            walls.push(new Cuadrado(680, 280, 20, 40, "gray"));
+            walls.push(new Cuadrado(660, 380, 260, 20, "gray"))
+            walls.push(new Cuadrado(920, 380, 20, 70, "blue"))
+            walls.push(new Cuadrado(860, 400, 20, 40, "gray"))
+
+            walls.push(new Cuadrado(920, 450, 100, 20, "gray"))
+            walls.push(new Cuadrado(820, 510, 200, 20, "gray"))
+            walls.push(new Cuadrado(1020, 450, 20, 160, "gray"))
+            walls.push(new Cuadrado(820, 480, 20, 40, "gray"))
+            walls.push(new Cuadrado(870, 570, 20, 180, "pink"));
+            walls.push(new Cuadrado(930, 530, 20, 80, "gray"));
+            walls.push(new Cuadrado(890, 690, 210, 20, "gray"));
+            walls.push(new Cuadrado(980, 650, 20, 40, "gray"));
+            walls.push(new Cuadrado(830, 750, 200, 20, "cyan"));
+
+
+            walls.push(new Cuadrado(380, 460, 20, 100, "gray"));
+            walls.push(new Cuadrado(440, 500, 90, 20, "green"));
+            walls.push(new Cuadrado(530, 500, 20, 60, "gray"));
+            walls.push(new Cuadrado(550, 540, 220, 20, "gray"));
+
+
+            walls.push(new Cuadrado(590, 460, 20, 40, "gray"));
+            walls.push(new Cuadrado(650, 500, 20, 40, "gray"));
+            walls.push(new Cuadrado(710, 460, 20, 40, "gray"));
+            walls.push(new Cuadrado(770, 400, 20, 220, "purple"));
+            walls.push(new Cuadrado(790, 600, 20, 20, "gray"));
+            walls.push(new Cuadrado(810, 600, 20, 80, "gray"));
+            walls.push(new Cuadrado(790, 660, 20, 20, "gray"));
+            walls.push(new Cuadrado(770, 660, 20, 120, "gray"));
+
+
+            walls.push(new Cuadrado(390, 220, 20, 40, "gray"));
+            walls.push(new Cuadrado(390, 260, 230, 20, "gray"))
+            walls.push(new Cuadrado(560, 210, 20, 50, "red"))
+            walls.push(new Cuadrado(620, 230, 20, 50, "gray"))
+            walls.push(new Cuadrado(620, 210, 140, 20, "gray"))
+            walls.push(new Cuadrado(740, 230, 20, 40, "gray"))
+            walls.push(new Cuadrado(740, 270, 60, 20, "gray"))
+            walls.push(new Cuadrado(800, 270, 20, 110, "gray"))
+
+            walls.push(new Cuadrado(690, 90, 20, 120, "gray"));
+            walls.push(new Cuadrado(710, 90, 270, 20, "gray"));
+            walls.push(new Cuadrado(740, 60, 20, 30, "gray"));
+            walls.push(new Cuadrado(800, 30, 20, 30, "gray"));
+            walls.push(new Cuadrado(860, 60, 20, 30, "gray"));
+            walls.push(new Cuadrado(920, 30, 20, 30, "gray"));
+            walls.push(new Cuadrado(980, 60, 20, 50, "yellow"));
+            walls.push(new Cuadrado(1000, 60, 100, 20, "gray"));
+            walls.push(new Cuadrado(1100, 60, 20, 50, "grey"));
+            walls.push(new Cuadrado(750, 150, 50, 20, "orange"));
+            walls.push(new Cuadrado(800, 110, 20, 120, "gray"));
+            walls.push(new Cuadrado(820, 210, 100, 20, "gray"));
+            walls.push(new Cuadrado(920, 210, 20, 60, "white"));
+            walls.push(new Cuadrado(860, 270, 80, 20, "gray"));
+            walls.push(new Cuadrado(860, 150, 300, 20, "gray"));
+            walls.push(new Cuadrado(1040, 110, 20, 40, "gray"));
+
+
+            walls.push(new Cuadrado(980, 170, 20, 220, "gray"));
+            walls.push(new Cuadrado(860, 330, 120, 20, "gray"));
+            walls.push(new Cuadrado(980, 390, 100, 20, "cyan"))
+            walls.push(new Cuadrado(1080, 350, 20, 340, "gray"))
+            walls.push(new Cuadrado(1040, 330, 60, 20, "gray"))
+
+            walls.push(new Cuadrado(1060, 270, 100, 20, "gray"))
+            walls.push(new Cuadrado(1040, 230, 20, 60, "gray"))
+            walls.push(new Cuadrado(1040, 210, 60, 20, "gray"))
+
+
+
+            walls.push(new Cuadrado(490, 170, 20, 50, "gray"));
+
+
+
+            walls.push(new Cuadrado(60, 260, 140, 20, "red"))
+            walls.push(new Cuadrado(60, 180, 20, 80, "gray"));
+            walls.push(new Cuadrado(30, 320, 130, 20, "gray"));
+            walls.push(new Cuadrado(70, 380, 130, 20, "grey"))
+            walls.push(new Cuadrado(30, 440, 60, 20, "white"))
+            walls.push(new Cuadrado(130, 400, 20, 120, "gray"));
+            walls.push(new Cuadrado(70, 500, 60, 20, "gray"))
+            walls.push(new Cuadrado(70, 520, 20, 40, "gray"));
+            walls.push(new Cuadrado(70, 560, 60, 20, "gray"))
+            walls.push(new Cuadrado(130, 560, 20, 160, "gray"));
+            walls.push(new Cuadrado(30, 620, 60, 20, "gray"))
+            walls.push(new Cuadrado(70, 640, 20, 40, "gray"));
+            walls.push(new Cuadrado(70, 720, 180, 20, "green"))
+            walls.push(new Cuadrado(230, 740, 20, 60, "blue"))
+            walls.push(new Cuadrado(250, 780, 40, 20, "gray"))
+            walls.push(new Cuadrado(290, 740, 20, 60, "blue"))
+            walls.push(new Cuadrado(290, 720, 220, 20, "green"))
+            walls.push(new Cuadrado(70, 740, 20, 40, "gray"));
+            walls.push(new Cuadrado(70, 780, 60, 20, "gray"))
+            walls.push(new Cuadrado(30, 840, 320, 20, "green"))
+            walls.push(new Cuadrado(350, 800, 20, 60, "gray"));
+            walls.push(new Cuadrado(350, 780, 220, 20, "gray"))
+            walls.push(new Cuadrado(510, 800, 20, 60, "gray"));
+            walls.push(new Cuadrado(290, 900, 340, 20, "blue"))
+            walls.push(new Cuadrado(410, 840, 20, 60, "gray"))
+            walls.push(new Cuadrado(430, 840, 40, 20, "gray"));
+            walls.push(new Cuadrado(670, 880, 20, 80, "purple"))
+            walls.push(new Cuadrado(570, 960, 320, 20, "orange"))
+            walls.push(new Cuadrado(890, 860, 20, 120, "gray"))
+            walls.push(new Cuadrado(890, 840, 60, 20, "gray"))
+            walls.push(new Cuadrado(950, 810, 20, 150, "gray"))
+            walls.push(new Cuadrado(950, 960, 170, 20, "orange"))
+            walls.push(new Cuadrado(1010, 770, 20, 130, "gray"))
+            walls.push(new Cuadrado(1010, 900, 60, 20, "gray"))
+            walls.push(new Cuadrado(1100, 840, 20, 120, "gray"))
+            walls.push(new Cuadrado(1060, 840, 40, 20, "gray"))
+            walls.push(new Cuadrado(1060, 800, 20, 40, "gray"))
+            walls.push(new Cuadrado(1060, 780, 40, 20, "gray"))
+            walls.push(new Cuadrado(1100, 750, 20, 50, "gray"))
+            walls.push(new Cuadrado(500, 920, 20, 60, "red"))
+            walls.push(new Cuadrado(30, 950, 140, 20, "red"))
+            walls.push(new Cuadrado(170, 890, 20, 100, "red"))
+            walls.push(new Cuadrado(440, 960, 20, 60, "red"))
+            walls.push(new Cuadrado(380, 920, 20, 60, "red"))
+            walls.push(new Cuadrado(230, 960, 150, 20, "red"))
+           
+
+
+
+            walls.push(new Cuadrado(170, 780, 20, 60, "gray"));
+            walls.push(new Cuadrado(110, 860, 20, 40, "gray"));
+            walls.push(new Cuadrado(230, 860, 20, 40, "gray"));
+
+            iWalls.src = "assets/pared.png";
+
+
+            walls.push(new Cuadrado(1160, 30, 20, 900, "yellow"));
+
+            walls.push(new Cuadrado(10, 1020, 1260, 20, "yellow"));
+
+            sound.src = "assets/mario.mp3";
+            sound2.src = "assets/levelCompletado.mp3";
+
+            update();
+
+        }
+
+        window.addEventListener('load', run(), false);
+
+        //Aqui se detecta el teclado
+        document.addEventListener("keydown", function (evt) {
+            //console.log(evt.keyCode)
+            lastPress = evt.keyCode;
+
+            if (evt.keyCode == 32) pause = (pause) ? false : true;
+
+        }, false);
+
+        window.requestAnimationFrame = (function () {
+            return window.requestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                function (callback) {
+                    window.setTimeout(callback, 17);
+                };
+        }());
+
+        function Cuadrado(x, y, w, h, c) {
+            //Atributos
+            this.x = x;
+            this.y = y;
+            this.w = w;
+            this.h = h;
+            this.c = c;
+
+            //Metodos
+            this.fill = function (ctx) {
+                ctx.fillStyle = this.c;
+                ctx.fillRect(this.x, this.y, this.w, this.h);
+                ctx.drawImage(iWalls, this.x, this.y, this.w, this.h);
+            }
+
+            this.touch = function (cuadro) {
+                if (this.x < cuadro.x + cuadro.w &&
+                    this.y < cuadro.y + cuadro.h &&
+
+                    this.x + this.w > cuadro.x &&
+                    this.y + this.h > cuadro.y) {
+
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+
+    </script>
+
+
+</body>
+
+</html>
