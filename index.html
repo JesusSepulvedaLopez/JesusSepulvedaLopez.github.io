@@ -16,7 +16,6 @@
         #canvasContainer {
             width: 1500px;
             height: 750px;
-            overflow: scroll;
 
         }
     </style>
@@ -100,10 +99,10 @@
 
                 sound.play();
 
-                if (lastPress == 39) dir = 'derecha';
-                if (lastPress == 37) dir = 'izquierda';
-                if (lastPress == 38) dir = 'arriba';
-                if (lastPress == 40) dir = 'abajo';
+                if (lastPress == 68) dir = 'derecha';
+                if (lastPress == 65) dir = 'izquierda';
+                if (lastPress == 87) dir = 'arriba';
+                if (lastPress == 83) dir = 'abajo';
 
                 if (dir == 'derecha') player.x += speed;
                 if (dir == 'izquierda') player.x -= speed;
@@ -148,7 +147,7 @@
             var canvas = document.getElementById('mycanvas'); //Poner lienzo
             ctx = canvas.getContext('2d');
 
-            iBackground.src = "assets/fondo.jpg";
+            //iBackground.src = "assets/fondo.jpg";
 
             player = new Cuadrado(10, 30, 25, 30, color);
             iPlayer.src = "assets/ardilla.png";
@@ -352,7 +351,7 @@
             walls.push(new Cuadrado(110, 860, 20, 40, "gray"));
             walls.push(new Cuadrado(230, 860, 20, 40, "gray"));
 
-            iWalls.src = "assets/pared.png";
+           iWalls.src = "assets/muro.png";
 
 
             walls.push(new Cuadrado(1160, 30, 20, 900, "yellow"));
@@ -373,7 +372,7 @@
             //console.log(evt.keyCode)
             lastPress = evt.keyCode;
 
-            if (evt.keyCode == 32) pause = (pause) ? false : true;
+            if (evt.keyCode == 80) pause = (pause) ? false : true;
 
         }, false);
 
