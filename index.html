@@ -61,7 +61,11 @@
         var iBackground = new Image();
         var sound = new Audio();
         var sound2 = new Audio();
-        
+
+        var min=0;
+        var seg=0;
+        var dec=0;
+       
 
         //Esta funcion pinta en pantalla
         function paint(ctx) {
@@ -113,6 +117,22 @@
                 ctx.fillText("Laberinto Completado", 400, 500)
             }
             
+            ctx.font = "30px Arial"
+            ctx.fillText("Tiempo: "+min+":"+seg,1250,100);
+            
+            if(!pause){
+                window.setInterval(function(){
+                    if(dec==99){
+                        dec=0;
+                        seg++;
+                    }
+                    if(seg==60){
+                        seg=0;
+                        min++;
+                    }
+                    dec++;
+                },1000);
+            }
 
         }
 
@@ -121,7 +141,12 @@
 
             if (!pause && !gameOver) {
 
+               
+
                 sound.play();
+
+                
+            
 
                 if (lastPress == 68) dir = 'derecha';
                 if (lastPress == 65) dir = 'izquierda';
@@ -160,6 +185,7 @@
                     }
                 }
 
+                
 
             } else {
                 sound.pause();
@@ -442,6 +468,10 @@
 
                 return false;
             }
+        }
+
+        function sumarSeg(){
+
         }
 
 
