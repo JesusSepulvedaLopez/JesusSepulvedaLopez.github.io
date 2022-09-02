@@ -16,7 +16,6 @@
         #canvasContainer {
             width: 1500px;
             height: 750px;
-            overflow: scroll;
 
         }
     </style>
@@ -47,18 +46,22 @@
         var player = null;
         var target = null;
         var walls = new Array();
-        //var wall = null;
 
         var pause = true;
         var score = 0;
         var gameOver = false
 
-        var iPlayer = new Image();
+        var iPlayerDer = new Image();
+        var iPlayerIzq = new Image();
+        var iPlayerArr = new Image();
+        var iPlayerAba = new Image();
+
         var iTarget = new Image();
         var iWalls = new Image();
         var iBackground = new Image();
         var sound = new Audio();
         var sound2 = new Audio();
+        
 
         //Esta funcion pinta en pantalla
         function paint(ctx) {
@@ -67,29 +70,49 @@
             ctx.fillRect(0, 0, 1500, 1050);
             ctx.drawImage(iBackground, 0, 0, 1500, 1050);
 
-            //Cuadrito
-            //player.fill(ctx);
-            ctx.drawImage(iPlayer, player.x, player.y);
-
-            //target.fill(ctx);
-            ctx.drawImage(iTarget, target.x, target.y);
 
             for (var i = 0; i < walls.length; i++) {
                 walls[i].fill(ctx);
 
             }
 
+             //Cuadrito
+            //player.fill(ctx);
+
+            switch (dir) {
+                case "derecha":
+                    ctx.drawImage(iPlayerDer, player.x, player.y, player.w, player.h);
+                    break;
+                case "izquierda":
+                    ctx.drawImage(iPlayerIzq, player.x, player.y, player.w, player.h);
+                    break;
+                case "arriba":
+                    ctx.drawImage(iPlayerArr, player.x, player.y, player.w, player.h);
+                    break;
+                case "abajo":
+                    ctx.drawImage(iPlayerAba, player.x, player.y, player.w, player.h);
+                    break;
+            }
+
+
+
+            //target.fill(ctx);
+            ctx.drawImage(iTarget, target.x, target.y);
+
 
             ctx.fillStyle = "white";
             ctx.font = "60px Arial"
+
+            
 
             if (pause) {
                 ctx.fillText("PAUSE", 550, 500)
             }
 
-            if(gameOver){
+            if (gameOver) {
                 ctx.fillText("Laberinto Completado", 400, 500)
             }
+            
 
         }
 
@@ -100,10 +123,10 @@
 
                 sound.play();
 
-                if (lastPress == 39) dir = 'derecha';
-                if (lastPress == 37) dir = 'izquierda';
-                if (lastPress == 38) dir = 'arriba';
-                if (lastPress == 40) dir = 'abajo';
+                if (lastPress == 68) dir = 'derecha';
+                if (lastPress == 65) dir = 'izquierda';
+                if (lastPress == 87) dir = 'arriba';
+                if (lastPress == 83) dir = 'abajo';
 
                 if (dir == 'derecha') player.x += speed;
                 if (dir == 'izquierda') player.x -= speed;
@@ -137,7 +160,8 @@
                     }
                 }
 
-            }else{
+
+            } else {
                 sound.pause();
             }
             paint(ctx);
@@ -148,13 +172,18 @@
             var canvas = document.getElementById('mycanvas'); //Poner lienzo
             ctx = canvas.getContext('2d');
 
-            iBackground.src = "assets/fondo.jpg";
+            iBackground.src = "assets/fondo.jpeg";
 
             player = new Cuadrado(10, 30, 25, 30, color);
-            iPlayer.src = "assets/ardilla.png";
+
+            iPlayerDer.src = "assets/cangrejoDer.png";
+            iPlayerIzq.src = "assets/cangrejoIzq.png";
+            iPlayerArr.src = "assets/cangrejoArr.png";
+            iPlayerAba.src = "assets/cangrejoAba.png";
+
 
             target = new Cuadrado(1240, 830, 150, 150, 'blue');
-            iTarget.src = "assets/bellota.png";
+            iTarget.src = "assets/dolar.png";
 
 
             walls.push(new Cuadrado(10, 10, 1170, 20, "yellow"));
@@ -344,7 +373,7 @@
             walls.push(new Cuadrado(440, 960, 20, 60, "red"))
             walls.push(new Cuadrado(380, 920, 20, 60, "red"))
             walls.push(new Cuadrado(230, 960, 150, 20, "red"))
-           
+
 
 
 
@@ -352,14 +381,14 @@
             walls.push(new Cuadrado(110, 860, 20, 40, "gray"));
             walls.push(new Cuadrado(230, 860, 20, 40, "gray"));
 
-            iWalls.src = "assets/pared.png";
+            iWalls.src = "assets/muro.png";
 
 
             walls.push(new Cuadrado(1160, 30, 20, 900, "yellow"));
 
             walls.push(new Cuadrado(10, 1020, 1260, 20, "yellow"));
 
-            sound.src = "assets/mario.mp3";
+            sound.src = "assets/bobesponja.mp3";
             sound2.src = "assets/levelCompletado.mp3";
 
             update();
@@ -373,7 +402,7 @@
             //console.log(evt.keyCode)
             lastPress = evt.keyCode;
 
-            if (evt.keyCode == 32) pause = (pause) ? false : true;
+            if (evt.keyCode == 80) pause = (pause) ? false : true;
 
         }, false);
 
